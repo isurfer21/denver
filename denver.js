@@ -1,11 +1,12 @@
 import { serve } from 'https://deno.land/std/http/server.ts';
-import { parse } from "https://deno.land/std/flags/mod.ts";
-import * as path from "https://deno.land/std/path/mod.ts";
+import { parse } from 'https://deno.land/std/flags/mod.ts';
+import * as path from 'https://deno.land/std/path/mod.ts';
+import mime from './mime-db.json';
 
 const APPNAME = 'DENVER';
 const APPVER = '1.0.0';
 
-class ArgumentParser {
+class Args {
     constructor() {
         this.argv = parse(Deno.args);
     }
@@ -22,33 +23,63 @@ class ArgumentParser {
     }
 }
 
-class EnvironmentVariable {
-    constructor() {
-        this.info = {};
-    }
-    load() {
+class Env {
+    static load() {
         const url =
             import.meta.url;
         const u = new URL(url);
         const f = u.protocol === 'file:' ? u.pathname : url;
         const d = f.replace(/[/][^/]*$/, '');
-        this.info = {
+        return {
             dirname: d,
-            filename: f,
-        };
+            filename: f
+        }
+    }
+}
+
+class Bytes {
+    static fileSize(b) {
+        var u = 0,
+            s = 1024;
+        while (b >= s || -b >= s) {
+            b /= s;
+            u++;
+        }
+        return (u ? b.toFixed(1) + ' ' : b) + ' KMGTPEZY' [u] + 'B';
+    }
+}
+
+class Mime {
+    static fileExt(filename) {
+        return filename.substring(filename.lastIndexOf('.') + 1);
+    }
+    static contentType(filename) {
+        let fileExt = Mime.fileExt(filename);
+        let types = [];
+        for (let i = 0; i < mime.length; i++) {
+            if (mime[i][0] == fileExt) {
+                types.push(mime[i][1]);
+            }
+        }
+        let mimeType = '';
+        if (types.length < 1) {
+            mimeType = 'application/octet-stream';
+        } else {
+            mimeType = types.join(',');
+        }
+        return mimeType;
     }
 }
 
 async function main() {
-    const env = new EnvironmentVariable();
-    env.load();
+    const env = Env.load();
 
-    const arg = new ArgumentParser();
-    const version = arg.parse('version', 'v', 'boolean', false),
-        help = arg.parse('help', 'h', 'boolean', false),
-        host = arg.parse('host', 'u', 'string', '127.0.0.1'),
-        port = arg.parse('port', 'p', 'number', '8080'),
-        docpath = arg.parse('docpath', 'd', 'string', env.info.dirname);
+    const args = new Args();
+    const version = args.parse('version', 'v', 'boolean', false),
+        help = args.parse('help', 'h', 'boolean', false),
+        host = args.parse('host', 'u', 'string', '127.0.0.1'),
+        port = args.parse('port', 'p', 'number', '8080'),
+        docpath = args.parse('docpath', 'd', 'string', env.dirname);
 
     if (help) {
         console.log(`${APPNAME}
@@ -71,11 +102,12 @@ Licensed under the MIT License.
 Server listening at http://${host}:${port}/
 Please hit 'Ctrl + C' to STOP the server.
 `);
+        const textEncoder = new TextEncoder();
         const server = serve(`${host}:${port}`);
         for await (const req of server) {
             let filepath = path.join(docpath, req.url);
             try {
-                let data = '';
+                let data = textEncoder.encode('');
                 let fileInfo = await Deno.stat(filepath);
                 if (fileInfo.isDirectory()) {
                     let files = await Deno.readDir(filepath);
@@ -84,20 +116,29 @@ Please hit 'Ctrl + C' to STOP the server.
                         if (f.isDirectory()) {
                             list.push(`<a href="./${f.name}/">${f.name}/</a>`);
                         } else if (f.isFile()) {
-                            list.push(`<a href="./${f.name}">${f.name}</a>`);
+                            let fsize = Bytes.fileSize(f.len);
+                            list.push(`<a href="./${f.name}">${f.name}</a> (${fsize})`);
                         }
                     }
-                    data = new TextEncoder().encode('<h1>Index</h1>' + list.join('<br>'));
+                    data = textEncoder.encode('<h1>Index</h1>' + list.join('<br>'));
+                    req.respond({
+                        status: 200,
+                        body: data
+                    });
                 } else if (fileInfo.isFile()) {
                     data = await Deno.readFile(filepath);
+                    const headers = new Headers();
+                    headers.set('content-type', Mime.contentType(filepath));
+                    req.respond({
+                        status: 200,
+                        headers: headers,
+                        body: data
+                    });
                 }
-                req.respond({
-                    body: data
-                });
             } catch (error) {
                 req.respond({
                     status: 404,
-                    body: new TextEncoder().encode(`${error.name}\n${error.message}`)
+                    body: textEncoder.encode(`${error.name}\n${error.message}`)
                 });
             }
         }
