@@ -74,10 +74,32 @@ Please hit 'Ctrl + C' to STOP the server.
         const server = serve(`${host}:${port}`);
         for await (const req of server) {
             let filepath = path.join(docpath, req.url);
-            let data = await Deno.readFile(filepath);
-            req.respond({
-                body: data
-            });
+            try {
+                let data = '';
+                let fileInfo = await Deno.stat(filepath);
+                if (fileInfo.isDirectory()) {
+                    let files = await Deno.readDir(filepath);
+                    let list = [];
+                    for (let f of files) {
+                        if (f.isDirectory()) {
+                            list.push(`<a href="./${f.name}/">${f.name}/</a>`);
+                        } else if (f.isFile()) {
+                            list.push(`<a href="./${f.name}">${f.name}</a>`);
+                        }
+                    }
+                    data = new TextEncoder().encode('<h1>Index</h1>' + list.join('<br>'));
+                } else if (fileInfo.isFile()) {
+                    data = await Deno.readFile(filepath);
+                }
+                req.respond({
+                    body: data
+                });
+            } catch (error) {
+                req.respond({
+                    status: 404,
+                    body: new TextEncoder().encode(`${error.name}\n${error.message}`)
+                });
+            }
         }
     }
 }
