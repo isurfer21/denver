@@ -39,6 +39,18 @@ Options:
 1. If you have downloaded the repository then you can replace [https://isurfer21.github.io/denver/denver.js](https://isurfer21.github.io/denver/denver.js) with **denver.js** in the below commands to run from local repository.
 2. You can also make an **alias** or **shortcut** for this command `deno --allow-net --allow-read https://isurfer21.github.io/denver/denver.js` as `denver`, so that you don't have to type this long command statement everytime you use it.
 
+#### Alias
+It would set as alias in currently active command-line session and would be useful til session lasts.
+
+##### On macOS & Linux
+```
+alias denver="deno --allow-net --allow-read https://isurfer21.github.io/denver/denver.js"
+```
+##### On Windows
+```
+doskey denver=deno --allow-net --allow-read https://isurfer21.github.io/denver/denver.js
+```
+
 ### Serve at root directory
 It would start the server with default settings, that means it would serve at root directory where the *denver.js* file got downloaded.
 
@@ -47,6 +59,11 @@ $ deno --allow-net --allow-read https://isurfer21.github.io/denver/denver.js
 ```
 
 So it is advisable to always pass the serving directory path in command-line parameters.
+
+#### Using alias
+```
+$ denver
+```
 
 ### Serve at current directory
 The current directory could be passed like this. You can run either of these commands.
@@ -58,6 +75,16 @@ or
 
 ```
 $ deno --allow-net --allow-read https://isurfer21.github.io/denver/denver.js --docpath=./
+```
+
+#### Using alias
+```
+$ denver -d=./
+```
+or
+
+```
+$ denver --docpath=./
 ```
 
 ### Serve at custom directory
@@ -72,6 +99,16 @@ or
 $ deno --allow-net --allow-read https://isurfer21.github.io/denver/denver.js --docpath=./web/
 ```
 
+#### Using alias
+```
+$ denver -d=./web/
+```
+or
+
+```
+$ denver --docpath=./web/
+```
+
 ### Serve at custom host
 The custom host will serve the resources to external systems. You can run either of these commands.
 
@@ -84,6 +121,16 @@ or
 $ deno --allow-net --allow-read https://isurfer21.github.io/denver/denver.js --host=192.168.0.1
 ```
 
+#### Using alias
+```
+$ denver -u=192.168.0.1
+```
+or
+
+```
+$ denver --host=192.168.0.1
+```
+
 ### Serve at custom port
 The custom port can be used based on requirement. You can run either of these commands.
 
@@ -94,6 +141,16 @@ or
 
 ```
 $ deno --allow-net --allow-read https://isurfer21.github.io/denver/denver.js --port=9000
+```
+
+#### Using alias
+```
+$ denver -p=9000
+```
+or
+
+```
+$ denver --port=9000
 ```
 
 ### Upgrade cached modules of app
