@@ -40,7 +40,7 @@ Options:
 2. You can also make an **alias** or **shortcut** for this command `deno --allow-net --allow-read https://isurfer21.github.io/denver/denver.js` as `denver`, so that you don't have to type this long command statement everytime you use it.
 
 #### Alias
-It would set as alias in currently active command-line session and would be useful til session lasts.
+It would set the whole command as alias in currently active command-line session and would be useful till session lasts.
 
 ##### On macOS & Linux
 ```
