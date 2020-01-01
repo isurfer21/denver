@@ -96,6 +96,20 @@ or
 $ deno --allow-net --allow-read https://isurfer21.github.io/denver/denver.js --port=9000
 ```
 
+### Upgrade cached modules of app
+Deno transparently downloads and caches modules on first usage and they won't be downloaded again unless you pass `--reload` flag to force fetch/compilation step again.
+
+```
+$ deno --allow-net --allow-read --reload https://isurfer21.github.io/denver/denver.js
+```
+
+### More info about app
+To get more information about app like dependencies and locate absolute path, run this command.
+
+```
+$ deno info https://isurfer21.github.io/denver/denver.js
+```
+
 ## References
 *Denver* is a remake of these static-servers made in other languages and platforms
 
