@@ -1,7 +1,7 @@
 import { serve } from 'https://deno.land/std/http/server.ts';
 import { parse } from 'https://deno.land/std/flags/mod.ts';
 import * as path from 'https://deno.land/std/path/mod.ts';
-import mime from './mime-db.json';
+import mime from 'https://isurfer21.github.io/denver/mime-db.json';
 
 const APPNAME = 'DENVER';
 const APPVER = '1.0.0';
@@ -99,6 +99,7 @@ Licensed under the MIT License.
 `);
     } else {
         console.log(`${APPNAME}
+Serving at ${docpath}
 Server listening at http://${host}:${port}/
 Please hit 'Ctrl + C' to STOP the server.
 `);
