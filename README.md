@@ -18,6 +18,39 @@ It is dependent on **Deno** which is a secure runtime for *JavaScript* and *Type
 
 You can install it from [https://deno.land/](https://deno.land/).
 
+## Install 
+You can directly install the application using this command
+
+```
+deno install denver https://isurfer21.github.io/denver/denver.js --allow-net --allow-read
+```
+
+#### Alias
+You can also make an **alias** or **shortcut** for this command `deno --allow-net --allow-read https://isurfer21.github.io/denver/denver.js` as `denver`, so that you don't have to type this long command statement everytime you use it.
+
+It would set the whole command as alias in currently active command-line session and would be useful till session lasts.
+
+##### On macOS & Linux
+```
+alias denver="deno --allow-net --allow-read https://isurfer21.github.io/denver/denver.js"
+```
+##### On Windows
+```
+doskey denver=deno --allow-net --allow-read https://isurfer21.github.io/denver/denver.js
+```
+
+#### Note
+If you have downloaded the repository then you can replace [https://isurfer21.github.io/denver/denver.js](https://isurfer21.github.io/denver/denver.js) with **denver.js** in the below commands to run from local repository.
+
+Alternatively, you can also install the app from your local respository using 
+
+```
+cd denver/
+deno install denver denver.js
+```
+
+This would work similar to *alias*.
+
 ## Usage
 You can see the command-line options using help command as shown below.
 
@@ -35,20 +68,14 @@ Options:
     
 ```
 
-#### Note
-1. If you have downloaded the repository then you can replace [https://isurfer21.github.io/denver/denver.js](https://isurfer21.github.io/denver/denver.js) with **denver.js** in the below commands to run from local repository.
-2. You can also make an **alias** or **shortcut** for this command `deno --allow-net --allow-read https://isurfer21.github.io/denver/denver.js` as `denver`, so that you don't have to type this long command statement everytime you use it.
+#### Using alias
+```
+$ denver -h
+```
+or 
 
-#### Alias
-It would set the whole command as alias in currently active command-line session and would be useful till session lasts.
-
-##### On macOS & Linux
 ```
-alias denver="deno --allow-net --allow-read https://isurfer21.github.io/denver/denver.js"
-```
-##### On Windows
-```
-doskey denver=deno --allow-net --allow-read https://isurfer21.github.io/denver/denver.js
+$ denver --help
 ```
 
 ### Serve at root directory
