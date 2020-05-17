@@ -1,7 +1,6 @@
 import { serve } from 'https://deno.land/std/http/server.ts';
 import { parse } from 'https://deno.land/std/flags/mod.ts';
 import * as path from 'https://deno.land/std/path/mod.ts';
-import mime from 'https://isurfer21.github.io/denver/mime-db.json';
 
 const APPNAME = 'DENVER';
 const APPVER = '1.0.0';
@@ -50,15 +49,20 @@ class Bytes {
 }
 
 class Mime {
+    static load(filepath) {
+        fetch(filepath)
+            .then(response => response.json())
+            .then(data => Mime.database = data);
+    }
     static fileExt(filename) {
         return filename.substring(filename.lastIndexOf('.') + 1);
     }
     static contentType(filename) {
         let fileExt = Mime.fileExt(filename);
         let types = [];
-        for (let i = 0; i < mime.length; i++) {
-            if (mime[i][0] == fileExt) {
-                types.push(mime[i][1]);
+        for (let i = 0; i < Mime.database.length; i++) {
+            if (Mime.database[i][0] == fileExt) {
+                types.push(Mime.database[i][1]);
             }
         }
         let mimeType = '';
@@ -103,22 +107,24 @@ Serving at ${docpath}
 Server listening at http://${host}:${port}/
 Please hit 'Ctrl + C' to STOP the server.
 `);
+        Mime.load('https://isurfer21.github.io/denver/mime-db.json');
+
         const textEncoder = new TextEncoder();
         const server = serve(`${host}:${port}`);
         for await (const req of server) {
             let filepath = path.join(docpath, req.url);
             try {
                 let data = textEncoder.encode('');
-                let fileInfo = await Deno.stat(filepath);
-                if (fileInfo.isDirectory()) {
-                    let files = await Deno.readDir(filepath);
+                const fileInfo = await Deno.stat(filepath);
+                if (fileInfo.isDirectory) {
                     let list = [];
-                    for (let f of files) {
-                        if (f.isDirectory()) {
-                            list.push(`<a href="./${f.name}/">${f.name}/</a>`);
-                        } else if (f.isFile()) {
-                            let fsize = Bytes.fileSize(f.len);
-                            list.push(`<a href="./${f.name}">${f.name}</a> (${fsize})`);
+                    for await (const dirEntry of Deno.readDir(filepath)) {
+                        if (dirEntry.isDirectory) {
+                            list.push(`<a href="./${dirEntry.name}/">${dirEntry.name}/</a>`);
+                        } else if (dirEntry.isFile) {
+                            let fileProp = await Deno.stat(path.join(filepath, dirEntry.name));
+                            let fileSize = Bytes.fileSize(fileProp.size);
+                            list.push(`<a href="./${dirEntry.name}">${dirEntry.name}</a> (${fileSize})`);
                         }
                     }
                     data = textEncoder.encode('<h1>Index</h1>' + list.join('<br>'));
@@ -126,7 +132,7 @@ Please hit 'Ctrl + C' to STOP the server.
                         status: 200,
                         body: data
                     });
-                } else if (fileInfo.isFile()) {
+                } else if (fileInfo.isFile) {
                     data = await Deno.readFile(filepath);
                     const headers = new Headers();
                     headers.set('content-type', Mime.contentType(filepath));
