@@ -3,7 +3,7 @@ import { parse } from 'https://deno.land/std/flags/mod.ts';
 import * as path from 'https://deno.land/std/path/mod.ts';
 
 const APPNAME = 'DENVER';
-const APPVER = '1.0.0';
+const APPVER = '1.0.1';
 
 class Args {
     constructor() {
@@ -112,7 +112,7 @@ Please hit 'Ctrl + C' to STOP the server.
         const textEncoder = new TextEncoder();
         const server = serve(`${host}:${port}`);
         for await (const req of server) {
-            let filepath = path.join(docpath, req.url);
+            let filepath = decodeURIComponent(path.join(docpath, req.url));
             try {
                 let data = textEncoder.encode('');
                 const fileInfo = await Deno.stat(filepath);
