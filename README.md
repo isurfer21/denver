@@ -1,4 +1,8 @@
 # denver
+
+![Runtime](https://img.shields.io/badge/deno-v1.0-green)
+![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey)
+
 > A static web server for deno platform.
 
 The name *denver* is a portmanteau word of *den*o and ser*ver* that is made specifically for deno platform. 
@@ -22,7 +26,13 @@ You can install it from [https://deno.land/](https://deno.land/).
 You can directly install the application using this command
 
 ```
-deno install denver https://isurfer21.github.io/denver/denver.js --allow-net --allow-read
+deno install --allow-net --allow-read -n denver https://isurfer21.github.io/denver/denver.js
+```
+
+If you have already installed an application with same then to upgrade it use this command
+
+```
+deno install --allow-net --allow-read -f -n denver https://isurfer21.github.io/denver/denver.js
 ```
 
 #### Alias
