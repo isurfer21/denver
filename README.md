@@ -5,9 +5,9 @@
 
 > A static web server for deno platform.
 
-The name *denver* is a portmanteau word of *den*o and ser*ver* that is made specifically for deno platform. 
+The name *denver* is a portmanteau word of *deno* and *server* that is made specifically for deno platform. 
 
-i.e., **den**o + ser**ver** → **denver** 
+i.e., **deno** + **server** → **denver** 
 
 ### Supported features
 
